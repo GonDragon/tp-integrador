@@ -3,6 +3,10 @@ const mysql = require('mysql2');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+const clientRoutes = require('./routes/client');
+const adminRoutes = require('./routes/admin');
+const apiRoutes = require('./routes/api');
+
 app.set('view engine', 'ejs');
 
 const pool = mysql.createPool({
@@ -15,22 +19,12 @@ const pool = mysql.createPool({
     queueLimit: 0
 });
 
-app.get('/', (req, res) => {
-    res.send('<h1>Hello World</h1>');
-});
-
-app.get('/test', (req, res) => {
-    pool.query('SHOW TABLES', (err, results) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).send('Error al consultar la base de datos');
-        }
-
-        res.render('test', { tablas: results });
-    });
-});
-
+module.exports = pool;
 app.use(express.static('public'));
+
+app.use('/', clientRoutes);
+app.use('/admin', adminRoutes);
+app.use('/api', apiRoutes);
 
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en el puerto ${PORT}`);
