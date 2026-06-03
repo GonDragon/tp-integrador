@@ -1,0 +1,72 @@
+[
+  {
+    "nombre": "Batido de proteína",
+    "detalles": "Batido preparado en el momento con proteína de suero aislada y agua o leche. Ideal para post-entreno inmediato.",
+    "precio": 3500.00,
+    "imagen": "batido_proteina.jpg",
+    "categoria": "Suplementos"
+  },
+  {
+    "nombre": "Botella de agua",
+    "detalles": "Agua mineral sin gas de 500ml. Fundamental para mantener la hidratación durante toda la rutina.",
+    "precio": 1200.00,
+    "imagen": "agua_500ml.jpg",
+    "categoria": "Suplementos"
+  },
+  {
+    "nombre": "Bebida energizante",
+    "detalles": "Lata de 473ml con cafeína y taurina para un boost de energía antes de arrancar a levantar pesado.",
+    "precio": 2500.00,
+    "imagen": "energizante.jpg",
+    "categoria": "Suplementos"
+  },
+  {
+    "nombre": "Bebida isotónica",
+    "detalles": "Bebida deportiva para reponer electrolitos y sales minerales perdidas durante el cardio o entrenamientos intensos.",
+    "precio": 1800.00,
+    "imagen": "isotonica.jpg",
+    "categoria": "Suplementos"
+  },
+  {
+    "nombre": "Scoop de proteína",
+    "detalles": "Un scoop individual de 30g de Whey Protein sabor chocolate o vainilla para que prepares tu propio batido.",
+    "precio": 1500.00,
+    "imagen": "scoop_whey.jpg",
+    "categoria": "Suplementos"
+  },
+  {
+    "nombre": "Toalla de mano",
+    "detalles": "Toalla de microfibra de secado rápido, obligatoria para el uso de las máquinas y bancos del salón.",
+    "precio": 4500.00,
+    "imagen": "toalla_mano.jpg",
+    "categoria": "Accesorios"
+  },
+  {
+    "nombre": "Alquiler de locker",
+    "detalles": "Uso diario de un casillero con candado de seguridad en los vestuarios para guardar tus pertenencias.",
+    "precio": 2000.00,
+    "imagen": "locker.jpg",
+    "categoria": "Accesorios"
+  },
+  {
+    "nombre": "Straps",
+    "detalles": "Correas de agarre de algodón reforzado para mejorar la tracción en ejercicios de tirón y peso muerto.",
+    "precio": 8500.00,
+    "imagen": "straps.jpg",
+    "categoria": "Accesorios"
+  },
+  {
+    "nombre": "Magnesio",
+    "detalles": "Bloque de magnesio en polvo para secar el sudor de las manos y asegurar un agarre firme y sin resbalones.",
+    "precio": 3000.00,
+    "imagen": "magnesio.jpg",
+    "categoria": "Accesorios"
+  },
+  {
+    "nombre": "Faja para peso muerto",
+    "detalles": "Cinturón de levantamiento de cuero sintético para estabilizar el core y proteger la zona lumbar en cargas máximas.",
+    "precio": 25000.00,
+    "imagen": "faja_lumbar.jpg",
+    "categoria": "Accesorios"
+  }
+]
