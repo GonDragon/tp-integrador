@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "node initialize.js && nodemon index.js"
   },
   "devDependencies": {
     "nodemon": "^3.1.0"
