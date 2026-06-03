@@ -7,7 +7,7 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: db_prog
+      MYSQL_DATABASE: autoservicio_gym
     ports:
       - "3306:3306"
     volumes:
