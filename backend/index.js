@@ -6,19 +6,24 @@ require('./models');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.set('view engine', 'ejs');
-app.use(express.static('public'));
+const clientRoutes = require('./routes/client');
+const adminRoutes = require('./routes/admin');
+const apiRoutes = require('./routes/api');
 
+const rutasProductos = require('./routes/productos');
+
+app.set('view engine', 'ejs');
+
+app.use(express.static('public'));
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/', (req, res) => {
-      res.send('<h1>API del Autoservicio Gym conectada</h1>');
-});
-        
-const rutasProductos = require('./routes/productos');
 app.use('/api/productos', rutasProductos);
+
+app.use('/', clientRoutes);
+app.use('/admin', adminRoutes);
+app.use('/api', apiRoutes);
 
 app.listen(PORT, async () => {
     console.log(`Servidor corriendo en el puerto ${PORT}`);
