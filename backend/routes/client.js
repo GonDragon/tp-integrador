@@ -38,4 +38,8 @@ router.get('/catalogo', verificarCliente, (req, res) => {
     res.render('client/catalogo', { cliente });
 });
 
+router.get('/carrito', (req, res) => {
+    res.render('client/carrito');
+});
+
 module.exports = router;
