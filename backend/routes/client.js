@@ -5,7 +5,7 @@ const router = express.Router();
 const verificarCliente = (req, res, next) => {
     const cookieCliente = req.cookies.cliente;
     const nombreParam = req.query.nombre;
-    const nombreTrim =  nombreParam.trim();
+    const nombreTrim =  nombreParam?.trim();
 
     if (nombreParam && nombreTrim !== '') {
         res.cookie('cliente', nombreTrim, {
