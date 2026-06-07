@@ -79,11 +79,13 @@
                     Total: <span id="precio-total">0</span>$
                 </h3>
             </div>
-            <div class="col-12 col-md-6 text-center text-md-end">
-                <button type="button" class="btn btn-primary btn-lg fw-bold text-uppercase px-5 w-100 w-md-auto">
+            <form id="form-checkout" action="/recibo" method="POST" class="col-12 col-md-6 text-center text-md-end">
+                <input type="hidden" name="carritoData" id="input-carrito-data">
+
+                <button type="submit" class="btn btn-primary btn-lg fw-bold text-uppercase px-5 w-100 w-md-auto">
                     Pagar
                 </button>
-            </div>
+            </form>
         </div>
     </div>
 </main>

@@ -42,4 +42,9 @@ router.get('/carrito', (req, res) => {
     res.render('client/carrito');
 });
 
+router.post('/recibo', (req, res) => {
+    const cliente = req.cookies.cliente || req.query.nombre;
+    res.render('client/recibo', { cliente });
+});
+
 module.exports = router;
