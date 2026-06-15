@@ -4,12 +4,13 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "node initialize.js && nodemon index.js"
   },
   "devDependencies": {
     "nodemon": "^3.1.0"
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "ejs": "^6.0.1",
