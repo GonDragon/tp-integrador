@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { Producto } = require('../models');
+
 //Middlewares
 const verificarCliente = (req, res, next) => {
     const cookieCliente = req.cookies.cliente;
@@ -11,9 +12,7 @@ const verificarCliente = (req, res, next) => {
         res.cookie('cliente', nombreTrim, {
             httpOnly: true
         });
-
         req.cookies.cliente = nombreTrim;
-
         return next();
     } else if (nombreParam) {
         res.clearCookie('cliente');
@@ -36,9 +35,7 @@ router.get('/catalogo', verificarCliente, async (req, res) => {
     const cliente = req.cookies.cliente || req.query.nombre;
     
     try {
-
         const productos = await Producto.findAll({ where: { activo: true } });
-
         res.render('client/catalogo', { cliente, productos });
     } catch (error) {
         console.error('Error al cargar el catálogo:', error);
@@ -46,13 +43,30 @@ router.get('/catalogo', verificarCliente, async (req, res) => {
     }
 });
 
-router.get('/carrito', (req, res) => {
-    res.render('client/carrito');
+router.get('/carrito', verificarCliente, (req, res) => {
+    const cliente = req.cookies.cliente || req.query.nombre;
+    res.render('client/carrito', { cliente });
 });
 
-router.post('/recibo', (req, res) => {
+router.post('/recibo', verificarCliente, (req, res) => {
     const cliente = req.cookies.cliente || req.query.nombre;
-    res.render('client/recibo', { cliente });
+    const carritoData = req.body.carritoData;
+    
+    let productosComprados = [];
+    let totalPagado = 0;
+
+    if (carritoData) {
+        productosComprados = JSON.parse(carritoData);
+        productosComprados.forEach(item => {
+            totalPagado += (item.precio * item.cantidad);
+        });
+    }
+
+    res.render('client/recibo', { 
+        cliente, 
+        productos: productosComprados, 
+        total: totalPagado 
+    });
 });
 
 module.exports = router;

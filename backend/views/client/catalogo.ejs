@@ -56,7 +56,12 @@
                             </div>
                             
                             <div class="mt-auto">
-                                <button class="btn btn-primary fw-bold w-100 rounded-2 text-uppercase">Agregar al carrito</button>
+                                <button class="btn btn-primary fw-bold w-100 rounded-2 text-uppercase btn-agregar" 
+                                        data-id="<%= producto.id %>" 
+                                        data-nombre="<%= producto.nombre %>" 
+                                        data-precio="<%= producto.precio %>">
+                                    Agregar al carrito
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -69,5 +74,8 @@
         <% } %>
     </div>
 </main>
+
+<!-- Conexión con el cerebro del carrito -->
+<script src="/js/catalogo.js"></script>
 
 <%- include('../partials/footer') %>

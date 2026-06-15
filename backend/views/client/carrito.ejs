@@ -9,68 +9,7 @@
     </div>
 
     <div id="lista-carrito" class="mb-5">
-
-        <div class="card w-100 mb-3 border-0 shadow-sm bg-body-tertiary overflow-hidden" aria-hidden="true">
-            <div class="d-flex align-items-center justify-content-between placeholder-glow">
-
-                <div class="d-flex align-items-center gap-3 flex-grow-1">
-                    <div class="placeholder bg-secondary-subtle" style="width: 90px; height: 90px; flex-shrink: 0;"></div>
-
-                    <div class="d-flex flex-column w-50 py-2">
-                        <span class="placeholder col-9 rounded mb-2 fs-5"></span>
-                        <span class="placeholder col-4 rounded fst-italic small"></span>
-                    </div>
-                </div>
-
-                <div class="d-flex align-items-center gap-2 pe-3">
-                    <div class="placeholder rounded bg-secondary-subtle" style="width: 55px; height: 38px;"></div>
-                    <div class="placeholder rounded bg-secondary-subtle" style="width: 38px; height: 38px;"></div>
-                </div>
-
-            </div>
         </div>
-
-        <div class="card w-100 mb-3 border-0 shadow-sm bg-body-tertiary overflow-hidden" aria-hidden="true">
-            <div class="d-flex align-items-center justify-content-between placeholder-glow">
-
-                <div class="d-flex align-items-center gap-3 flex-grow-1">
-                    <div class="placeholder bg-secondary-subtle" style="width: 90px; height: 90px; flex-shrink: 0;"></div>
-
-                    <div class="d-flex flex-column w-50 py-2">
-                        <span class="placeholder col-7 rounded mb-2 fs-5"></span>
-                        <span class="placeholder col-5 rounded fst-italic small"></span>
-                    </div>
-                </div>
-
-                <div class="d-flex align-items-center gap-2 pe-3">
-                    <div class="placeholder rounded bg-secondary-subtle" style="width: 55px; height: 38px;"></div>
-                    <div class="placeholder rounded bg-secondary-subtle" style="width: 38px; height: 38px;"></div>
-                </div>
-
-            </div>
-        </div>
-
-        <div class="card w-100 mb-3 border-0 shadow-sm bg-body-tertiary overflow-hidden" aria-hidden="true">
-            <div class="d-flex align-items-center justify-content-between placeholder-glow">
-
-                <div class="d-flex align-items-center gap-3 flex-grow-1">
-                    <div class="placeholder bg-secondary-subtle" style="width: 90px; height: 90px; flex-shrink: 0;"></div>
-
-                    <div class="d-flex flex-column w-50 py-2">
-                        <span class="placeholder col-10 rounded mb-2 fs-5"></span>
-                        <span class="placeholder col-3 rounded fst-italic small"></span>
-                    </div>
-                </div>
-
-                <div class="d-flex align-items-center gap-2 pe-3">
-                    <div class="placeholder rounded bg-secondary-subtle" style="width: 55px; height: 38px;"></div>
-                    <div class="placeholder rounded bg-secondary-subtle" style="width: 38px; height: 38px;"></div>
-                </div>
-
-            </div>
-        </div>
-
-    </div>
 
     <div class="card p-4 shadow-sm border-0 bg-body-tertiary rounded-3">
         <div class="row align-items-center g-3">
@@ -82,12 +21,14 @@
             <form id="form-checkout" action="/recibo" method="POST" class="col-12 col-md-6 text-center text-md-end">
                 <input type="hidden" name="carritoData" id="input-carrito-data">
 
-                <button type="submit" class="btn btn-primary btn-lg fw-bold text-uppercase px-5 w-100 w-md-auto">
+                <button type="submit" id="btn-pagar" class="btn btn-primary btn-lg fw-bold text-uppercase px-5 w-100 w-md-auto">
                     Pagar
                 </button>
             </form>
         </div>
     </div>
 </main>
+
+<script src="/js/carrito.js"></script>
 
 <%- include('../partials/footer') %>
