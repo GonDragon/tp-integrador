@@ -31,7 +31,10 @@ app.listen(PORT, async () => {
     console.log(`Servidor corriendo en el puerto ${PORT}`);
     
     await connectDB();
-    
-    await sequelize.sync({ force: false });
-    console.log('Tablas sincronizadas correctamente en MySQL');
+    try {
+        await sequelize.sync({ force: false });
+        console.log('Tablas sincronizadas correctamente en MySQL');
+    } catch (err) {
+        console.warn('No se pudo sincronizar las tablas con MySQL — se continuará sin DB:', err.message);
+    }
 });

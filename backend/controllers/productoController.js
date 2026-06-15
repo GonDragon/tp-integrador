@@ -5,10 +5,16 @@ const obtenerProductos = async (req, res) => {
         const productos = await Producto.findAll({
             where: { activo: true }
         });
-        res.json(productos);
+        return res.json(productos);
     } catch (error) {
-        console.error('Error al traer los suplementos:', error);
-        res.status(500).json({ error: 'Hubo un problema al cargar los productos' });
+        console.warn('Error al traer los productos desde DB, usando catálogo estático:', error.message);
+        try {
+            const catalogo = require('../catalogo.json');
+            return res.json(catalogo);
+        } catch (fsErr) {
+            console.error('No se pudo leer catalogo.json como fallback:', fsErr);
+            return res.status(500).json({ error: 'Hubo un problema al cargar los productos' });
+        }
     }
 };
 

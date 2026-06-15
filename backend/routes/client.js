@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-
+const { Producto } = require('../models');
 //Middlewares
 const verificarCliente = (req, res, next) => {
     const cookieCliente = req.cookies.cliente;
@@ -16,7 +16,6 @@ const verificarCliente = (req, res, next) => {
 
         return next();
     } else if (nombreParam) {
-        // Eliminar la cookie si el parametro nombre es vacio
         res.clearCookie('cliente');
         return res.redirect('/');
     }
@@ -33,9 +32,18 @@ router.get('/', (req, res) => {
     res.render('client/datos_cliente');
 });
 
-router.get('/catalogo', verificarCliente, (req, res) => {
+router.get('/catalogo', verificarCliente, async (req, res) => {
     const cliente = req.cookies.cliente || req.query.nombre;
-    res.render('client/catalogo', { cliente });
+    
+    try {
+
+        const productos = await Producto.findAll({ where: { activo: true } });
+
+        res.render('client/catalogo', { cliente, productos });
+    } catch (error) {
+        console.error('Error al cargar el catálogo:', error);
+        res.render('client/catalogo', { cliente, productos: [] });
+    }
 });
 
 router.get('/carrito', (req, res) => {
