@@ -49,23 +49,37 @@ router.get('/carrito', verificarCliente, (req, res) => {
 });
 
 router.post('/recibo', verificarCliente, (req, res) => {
-    const cliente = req.cookies.cliente || req.query.nombre;
-    const carritoData = req.body.carritoData;
-    
-    let productosComprados = [];
+    const cliente = req.cookies.cliente || 'Atleta';
+    const carritoCrudo = req.body.carritoData;
+
+    let carrito = [];
     let totalPagado = 0;
 
-    if (carritoData) {
-        productosComprados = JSON.parse(carritoData);
-        productosComprados.forEach(item => {
-            totalPagado += (item.precio * item.cantidad);
-        });
+    if (carritoCrudo) {
+        try {
+            const parsed = JSON.parse(carritoCrudo);
+
+            if (Array.isArray(parsed)) {
+                carrito = parsed.map(item => ({
+                    ...item,
+                    precio: parseFloat(item.precio) || 0,
+                    cantidad: parseInt(item.cantidad) || 1
+                }));
+
+                carrito.forEach(item => {
+                    totalPagado += (item.precio * item.cantidad);
+                });
+            }
+        } catch (error) {
+            console.error('🚨 Error crítico: JSON malformado en el carrito:', error);
+            return res.redirect('/catalogo');
+        }
     }
 
-    res.render('client/recibo', { 
-        cliente, 
-        productos: productosComprados, 
-        total: totalPagado 
+    res.render('client/recibo', {
+        cliente,
+        carrito,
+        total: totalPagado
     });
 });
 

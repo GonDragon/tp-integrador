@@ -1,60 +1,111 @@
 <%- include('../partials/header') %>
 
-<main class="container py-5 flex-grow-1">
-    <div class="row justify-content-center">
-        <div class="col-12 col-md-8 col-lg-6">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-            <div class="card p-4 p-sm-5 border-0 shadow bg-body-tertiary rounded-4 position-relative overflow-hidden">
+<main class="container py-5 text-center flex-grow-1">
+    <div class="mb-4">
+        <span class="fs-1 d-block mb-3">✅</span>
+        <h1 class="fw-bold text-success text-uppercase">¡Compra Exitosa!</h1>
+        <p class="text-muted fs-5">Gracias por tu pedido, <strong><%= cliente %></strong>.</p>
+    </div>
 
-                <div class="text-center mb-4 border-bottom pb-4 border-secondary-subtle">
-                    <h2 class="fw-bold text-uppercase tracking-wider mt-2 mb-1 fs-3">Recibo de Compra</h2>
-                    <p class="text-muted small mb-0">Cliente: <strong class="text-body"><%= cliente %></strong></p>
-                </div>
+    <script>
+        const datosDelTicket = <%- JSON.stringify(carrito) %>;
+        const nombreCliente = "<%= cliente %>";
+        // ¡Magia! Vaciamos el carrito del navegador RECIÉN ACÁ, porque el pago ya fue un éxito.
+        localStorage.removeItem('carrito_gym');
+    </script>
 
-                <div class="mb-4 border-bottom pb-3 border-secondary-subtle">
-                    <h5 class="fw-bold text-uppercase small text-muted tracking-wider mb-3">Detalle del Pedido</h5>
+    <div class="card p-5 shadow border-0 bg-body-tertiary rounded-4 mx-auto" style="max-width: 500px;">
+        <h4 class="fw-bold mb-4">Resumen de Operación</h4>
+        
+        <p class="text-muted mb-4">Tu pedido ya está siendo preparado en recepción. Por favor, descargá tu comprobante para retirar los suplementos.</p>
+        
+        <button id="btn-descargar-pdf" class="btn btn-primary btn-lg w-100 fw-bold text-uppercase d-flex align-items-center justify-content-center gap-2 shadow-sm rounded-3">
+            <span>📄</span> Descargar Ticket PDF
+        </button>
 
-                    <% if (productos && productos.length > 0) { %>
-                        <% productos.forEach(item => { %>
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <div>
-                                    <span class="fs-5 fw-bold d-block mb-1"><%= item.nombre %></span>
-                                    <span class="small text-muted">Cant: <%= item.cantidad %> x $<%= item.precio %></span>
-                                </div>
-                                <span class="fs-5 fw-bold text-primary">$<%= item.precio * item.cantidad %></span>
-                            </div>
-                        <% }) %>
-                    <% } else { %>
-                        <div class="alert alert-warning text-center">
-                            No se encontraron detalles de la compra.
-                        </div>
-                    <% } %>
-                </div>
-
-                <div class="d-flex justify-content-between align-items-center mb-5">
-                    <span class="fw-bold text-uppercase tracking-wider text-muted small">Total Pagado</span>
-                    <span class="fw-bold fs-2 text-success">
-                        $<%= total ? total.toFixed(2) : '0.00' %>
-                    </span>
-                </div>
-
-                <div class="row g-2">
-                    <div class="col-12 col-sm-6">
-                        <button type="button" class="btn btn-primary w-100 py-2.5 fw-bold text-uppercase d-flex align-items-center justify-content-center gap-2 rounded-3" onclick="window.print()">
-                            Descargar
-                        </button>
-                    </div>
-                    <div class="col-12 col-sm-6">
-                        <a href="/" class="btn btn-outline-secondary w-100 py-2.5 fw-bold text-uppercase d-flex align-items-center justify-content-center gap-2 rounded-3">
-                            Inicio
-                        </a>
-                    </div>
-                </div>
-
-            </div>
-
-        </div>
+        <a href="/" class="btn btn-outline-secondary w-100 mt-3 fw-bold text-uppercase rounded-3">
+            Volver al Inicio
+        </a>
     </div>
 </main>
+
+<script>
+    document.getElementById('btn-descargar-pdf').addEventListener('click', () => {
+        // Inicializamos jsPDF
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        
+        // --- 1. ENCABEZADO DEL TICKET ---
+        doc.setFontSize(22);
+        doc.setFont("helvetica", "bold");
+        doc.text("COLISSEUM FIT", 105, 20, { align: "center" });
+        
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "normal");
+        doc.text("Gimnasio & Suplementos", 105, 28, { align: "center" });
+        
+        // Línea separadora
+        doc.line(20, 35, 190, 35);
+        
+        // --- 2. DATOS DEL CLIENTE ---
+        doc.setFontSize(14);
+        doc.setFont("helvetica", "bold");
+        doc.text("Datos de la compra:", 20, 45);
+        
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "normal");
+        doc.text(`Cliente: ${nombreCliente}`, 20, 53);
+        
+        // Fecha actual
+        const fecha = new Date().toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        const hora = new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+        doc.text(`Fecha: ${fecha} - ${hora}`, 20, 60);
+
+        // --- 3. LISTADO DE PRODUCTOS ---
+        doc.setFont("helvetica", "bold");
+        doc.text("CANT.", 20, 75);
+        doc.text("PRODUCTO", 45, 75);
+        doc.text("SUBTOTAL", 160, 75);
+        doc.line(20, 78, 190, 78); // Línea abajo de los títulos
+        
+        doc.setFont("helvetica", "normal");
+        
+        let y = 88; // Coordenada vertical inicial
+        let totalGeneral = 0;
+
+        // Recorremos los datos que vinieron de EJS
+        datosDelTicket.forEach(item => {
+            const subtotal = item.cantidad * item.precio;
+            totalGeneral += subtotal;
+
+            doc.text(`${item.cantidad}x`, 20, y);
+            doc.text(`${item.nombre}`, 45, y);
+            doc.text(`$${subtotal.toFixed(2)}`, 160, y);
+            
+            y += 10; // Bajamos 10 puntos por cada renglón
+        });
+
+        // --- 4. TOTAL Y PIE DE PÁGINA ---
+        doc.line(20, y, 190, y); // Línea arriba del total
+        y += 10;
+        
+        doc.setFontSize(16);
+        doc.setFont("helvetica", "bold");
+        doc.text("TOTAL PAGADO:", 100, y);
+        doc.text(`$${totalGeneral.toFixed(2)}`, 160, y);
+        
+        y += 20;
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "italic");
+        doc.text("Ticket no válido como factura fiscal.", 105, y, { align: "center" });
+        doc.text("¡Gracias por entrenar con nosotros!", 105, y + 6, { align: "center" });
+
+        // --- 5. ORDEN DE DESCARGA ---
+        // Al final, le decimos a la librería que guarde el archivo con este nombre
+        doc.save(`Ticket_ColisseumFit_${nombreCliente.replace(' ', '_')}.pdf`);
+    });
+</script>
 
 <%- include('../partials/footer') %>

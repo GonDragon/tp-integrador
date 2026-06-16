@@ -64,8 +64,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     renderizarCarrito();
-
-    formCheckout.addEventListener('submit', () => {
-        localStorage.removeItem('carrito_gym');
-    });
 });
