@@ -1,0 +1,101 @@
+<%- include('../partials/header') %>
+
+<main class="container py-5 flex-grow-1">
+    
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <div>
+            <h2 class="fw-bold text-uppercase tracking-wider m-0 fs-3">Panel de Control</h2>
+            <p class="text-muted small mb-0">Gestión de stock e inventario de ColisseumFit</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="/admin/productos/nuevo" class="btn btn-success fw-bold d-flex align-items-center gap-2 shadow-sm rounded-3">
+                <span>➕</span> Nuevo Producto
+            </a>
+            <a href="/admin/logout" class="btn btn-outline-danger fw-bold d-flex align-items-center gap-2 shadow-sm rounded-3">
+                Salir
+            </a>
+        </div>
+    </div>
+
+   <% if (typeof mensaje !== 'undefined' && mensaje) { %>
+        <div class="alert alert-success alert-dismissible fade show fw-bold shadow-sm rounded-3 d-flex align-items-center" role="alert">
+            <span class="fs-4 me-2">✅</span> 
+            <div>
+                <% if(mensaje === 'creado') { %> ¡Producto guardado y publicado con éxito! <% } %>
+                <% if(mensaje === 'editado') { %> ¡Producto actualizado correctamente! <% } %>
+                <% if(mensaje === 'eliminado') { %> ¡Producto eliminado del sistema! <% } %>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <% } %>
+
+    <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-danger alert-dismissible fade show fw-bold shadow-sm rounded-3 d-flex align-items-center" role="alert">
+            <span class="fs-4 me-2">❌</span> 
+            <div><%= error %></div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <% } %>
+
+    <div class="card border-0 shadow-sm bg-body-tertiary rounded-4 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr class="text-uppercase small tracking-wider">
+                        <th scope="col" class="ps-4">ID</th>
+                        <th scope="col">Foto</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Precio</th>
+                        <th scope="col">Estado</th>
+                        <th scope="col" class="text-end pe-4">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (typeof productos !== 'undefined' && productos.length > 0) { %>
+                        <% productos.forEach(producto => { %>
+                            <tr>
+                                <td class="ps-4 fw-bold text-muted">#<%= producto.id %></td>
+                                <td>
+                                    <div class="bg-white rounded shadow-sm d-flex justify-content-center align-items-center" style="width: 50px; height: 50px;">
+                                        <img src="/img/<%= producto.imagen %>" alt="<%= producto.nombre %>" style="max-width: 40px; max-height: 40px; object-fit: contain;">
+                                    </div>
+                                </td>
+                                <td class="fw-bold"><%= producto.nombre %></td>
+                                <td class="text-success fw-bold">$<%= producto.precio %></td>
+                                <td>
+                                    <% if (producto.activo) { %>
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill">Activo</span>
+                                    <% } else { %>
+                                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill">Inactivo</span>
+                                    <% } %>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="btn-group shadow-sm" role="group">
+                                        <a href="/admin/productos/editar/<%= producto.id %>" class="btn btn-sm btn-outline-primary" title="Editar precio/datos">
+                                            ✏️
+                                        </a>
+                                        <form action="/admin/productos/eliminar/<%= producto.id %>" method="POST" class="d-inline" onsubmit="return confirm('🚨 ¿Estás totalmente seguro de que querés borrar este producto del catálogo?');">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Borrar del sistema">
+                                                🗑️
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="6" class="text-center py-5 text-muted">
+                                <span class="fs-1 d-block mb-3">📦</span>
+                                <h5 class="fw-bold">No hay suplementos cargados en el sistema</h5>
+                                <p class="small">Hacé clic en el botón verde de "Nuevo Producto" para empezar a llenar tu catálogo.</p>
+                            </td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<%- include('../partials/footer') %>
