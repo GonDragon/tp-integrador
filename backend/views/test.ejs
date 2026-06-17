@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+    <title>Test DB</title>
+</head>
+<body>
+<h1>Tablas en la Base de Datos</h1>
+
+<% if (tablas.length === 0) { %>
+    <p>La base de datos está vacía (no hay tablas).</p>
+<% } else { %>
+    <ul>
+        <% tablas.forEach(function(tabla) { %>
+            <li><%= Object.values(tabla)[0] %></li>
+        <% }); %>
+    </ul>
+<% } %>
+</body>
+</html>

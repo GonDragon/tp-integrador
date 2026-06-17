@@ -1,0 +1,19 @@
+.brand-subtitle {
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.border-gym {
+  border-bottom: 3px solid #0d6efd;
+  position: relative;
+}
+.border-gym::after {
+  content: "";
+  position: absolute;
+  bottom: -3px;
+  right: 0;
+  width: 50%;
+  height: 3px;
+  background-color: #fd7e14;
+}

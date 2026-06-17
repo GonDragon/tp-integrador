@@ -1,0 +1,66 @@
+<%- include('../partials/header') %>
+
+<div class="container" style="margin-top: -3.5rem; position: relative; z-index: 10;">
+    <div class="row g-2 flex-nowrap justify-content-center">
+        <div class="col-3" style="max-width: 115px;">
+            <a type="button" href="/" class="btn btn-outline-secondary bg-body shadow-sm w-100 d-flex flex-column align-items-center justify-content-center rounded-3 p-2" style="aspect-ratio: 1 / 1;">
+                <span class="fs-3">⬅️</span>
+                <span class="fw-bold mt-1 text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px;">Volver</span>
+            </a>
+        </div>
+        <div class="col-3" style="max-width: 115px;">
+            <button type="button" class="btn btn-outline-secondary bg-body shadow-sm w-100 d-flex flex-column align-items-center justify-content-center rounded-3 p-2" style="aspect-ratio: 1 / 1;">
+                <span class="fs-3">📦</span>
+                <span class="fw-bold mt-1 text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px;">Cat 1</span>
+            </button>
+        </div>
+        <div class="col-3" style="max-width: 115px;">
+            <button type="button" class="btn btn-outline-secondary bg-body shadow-sm w-100 d-flex flex-column align-items-center justify-content-center rounded-3 p-2" style="aspect-ratio: 1 / 1;">
+                <span class="fs-3">🏋️</span>
+                <span class="fw-bold mt-1 text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px;">Cat 2</span>
+            </button>
+        </div>
+        <div class="col-3" style="max-width: 115px;">
+            <a type="button" href="/carrito" class="btn btn-outline-secondary bg-body shadow-sm w-100 d-flex flex-column align-items-center justify-content-center rounded-3 p-2" style="aspect-ratio: 1 / 1;">
+                <span class="fs-3">➡️</span>
+                <span class="fw-bold mt-1 text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px;">Carrito</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<main class="container py-4 text-center">
+    <h2 class="fw-bold text-uppercase tracking-wider mb-1">Catálogo</h2>
+    <p class="text-muted small">Bienvenido de vuelta, <strong><%= cliente %></strong></p>
+
+    <div id="contenedor-productos" class="row g-4 mt-4">
+        
+        <% for(let i=0; i<4; i++) { %>
+        <div class="col-12 col-md-6 col-lg-3 placeholder-card">
+            <div class="card h-100 border-0 shadow-sm bg-body-tertiary text-start" aria-hidden="true">
+                <div class="bg-secondary opacity-25 rounded-top" style="height: 200px; width: 100%;"></div>
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title placeholder-glow mb-2">
+                        <span class="placeholder col-8 rounded"></span>
+                    </h5>
+                    <p class="card-text placeholder-glow flex-grow-1 mb-3">
+                        <span class="placeholder col-12 rounded"></span>
+                        <span class="placeholder col-8 rounded"></span>
+                    </p>
+                    <div class="mb-3 placeholder-glow">
+                        <span class="placeholder col-4 rounded fs-5"></span>
+                    </div>
+                    <div class="mt-auto placeholder-glow">
+                        <span class="placeholder col-12 py-3 rounded-2 bg-primary opacity-50"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <% } %>
+
+    </div>
+</main>
+
+<script src="/js/catalogo.js"></script>
+
+<%- include('../partials/footer') %>
