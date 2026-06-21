@@ -1,7 +1,39 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
-const { Admin, Producto } = require('../models');
+const { Admin, Producto, Imagen } = require('../models');
+const multer = require('multer');
+const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
+
+// CONFIGURACIÓN DE MULTER
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+const STORAGE_DIR = process.env.STORAGE_DIR || path.join(__dirname, '../../storage');
+
+async function procesarImagen(file) {
+    if (!file) return null;
+
+    const hash = crypto.createHash('md5').update(file.buffer).digest('hex');
+    const ext = path.extname(file.originalname).toLowerCase();
+    
+    let imagen = await Imagen.findOne({ where: { hash: hash } });
+
+    if (!imagen) {
+        const fileName = `${hash}${ext}`;
+        const filePath = path.join(STORAGE_DIR, fileName);
+        
+        fs.writeFileSync(filePath, file.buffer);
+        
+        imagen = await Imagen.create({
+            hash: hash,
+            extension: ext
+        });
+    }
+
+    return imagen.id;
+}
 
 //MIDDLEWARE
 const verificarAdmin = (req, res, next) => {
@@ -62,25 +94,27 @@ router.get('/productos/nuevo', verificarAdmin, (req, res) => {
     res.render('admin/nuevo_producto', { error: null });
 });
 
-router.post('/productos/nuevo', verificarAdmin, async (req, res) => {
-    const { nombre, detalles, precio, imagen, categoria, activo } = req.body;
+router.post('/productos/nuevo', verificarAdmin, upload.single('imagen'), async (req, res) => {
+    const { nombre, detalles, precio, categoria, activo } = req.body;
     
-    console.log("📥 Recibiendo datos del form:", req.body); 
+    console.log("Recibiendo datos del form:", req.body); 
 
     try {
+        const imagenId = await procesarImagen(req.file);
+
         const nuevoProd = await Producto.create({
             nombre: nombre,
             detalles: detalles,
             precio: parseFloat(precio),
-            imagen: imagen,
+            imagenId: imagenId,
             categoria: categoria || 'General',
             activo: activo === 'on' ? true : false 
         });
 
-        console.log("✅ Producto guardado en MySQL con ID:", nuevoProd.id);
+        console.log("Producto guardado en MySQL con ID:", nuevoProd.id);
         res.redirect('/admin?mensaje=creado');
     } catch (error) {
-        console.error('❌ Error de Sequelize al guardar:', error.message);
+        console.error('Error de Sequelize al guardar:', error.message);
         res.render('admin/nuevo_producto', { error: 'Error al guardar en la base de datos: ' + error.message });
     }
 });
@@ -112,19 +146,24 @@ router.get('/productos/editar/:id', verificarAdmin, async (req, res) => {
     }
 });
 
-router.post('/productos/editar/:id', verificarAdmin, async (req, res) => {
+router.post('/productos/editar/:id', verificarAdmin, upload.single('imagen'), async (req, res) => {
     const id = req.params.id;
-    const { nombre, detalles, precio, imagen, categoria, activo } = req.body;
+    const { nombre, detalles, precio, categoria, activo } = req.body;
     
     try {
-        await Producto.update({
+        const updateData = {
             nombre: nombre,
             detalles: detalles,
             precio: parseFloat(precio),
-            imagen: imagen,
             categoria: categoria || 'General',
             activo: activo === 'on' ? true : false 
-        }, {
+        };
+
+        if (req.file) {
+            updateData.imagenId = await procesarImagen(req.file);
+        }
+
+        await Producto.update(updateData, {
             where: { id: id }
         });
 
