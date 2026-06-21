@@ -650,3 +650,6 @@ $RECYCLE.BIN/
 # End of https://www.toptal.com/developers/gitignore/api/vs,phpstorm,linux,windows,node
 
 .idea/**
+
+#Storage
+/storage/*

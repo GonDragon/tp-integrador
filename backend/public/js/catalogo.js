@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const cardHtml = `
                     <div class="col-12 col-md-6 col-lg-3">
                         <div class="card h-100 border-0 shadow-sm bg-body-tertiary text-start">
-                            <img src="/img/${producto.imagen}" class="card-img-top p-3" alt="${producto.nombre}" style="height: 200px; object-fit: contain;">
+                            <img src="/img/productos/${producto.imagen}" class="card-img-top p-3" alt="${producto.nombre}" style="height: 200px; object-fit: contain;">
                             
                             <div class="card-body d-flex flex-column">
                                 <h5 class="card-title fw-bold mb-2">${producto.nombre}</h5>

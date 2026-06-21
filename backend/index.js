@@ -10,6 +10,7 @@ const PORT = process.env.PORT || 3000;
 const clientRoutes = require('./routes/client');
 const adminRoutes = require('./routes/admin');
 const apiRoutes = require('./routes/api');
+const imgProductosRoutes = require('./routes/imgProductos');
 
 app.set('view engine', 'ejs');
 
@@ -22,6 +23,7 @@ app.use(cookieParser());
 app.use('/', clientRoutes);
 app.use('/admin', adminRoutes);
 app.use('/api', apiRoutes);
+app.use('/img/productos', imgProductosRoutes)
 
 app.listen(PORT, async () => {
     console.log(`Servidor corriendo en el puerto ${PORT}`);

@@ -27,11 +27,13 @@ services:
       - DB_USER=root
       - DB_PASSWORD=root
       - DB_NAME=autoservicio_gym
+      - STORAGE_DIR=/usr/src/storage
     depends_on:
       db:
         condition: service_healthy
     volumes:
       - ./backend:/usr/src/app:Z
+      - ./storage:/usr/src/storage:Z
       - backend_node_modules:/usr/src/app/node_modules
     command: npm run dev
 
