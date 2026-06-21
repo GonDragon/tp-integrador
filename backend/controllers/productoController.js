@@ -49,28 +49,4 @@ const obtenerProductos = async (req, res) => {
     }
 };
 
-const crearProducto = async (req, res) => {
-    try {
-        const { nombre, detalles, precio, imagen, categoria, activo } = req.body;
-
-        if (!nombre || !detalles || !precio || !categoria) {
-            return res.status(400).json({ error: 'Faltan campos obligatorios para crear el producto' });
-        }
-
-        const nuevoProducto = await Producto.create({
-            nombre,
-            detalles,
-            precio,
-            imagen: imagen || '',
-            categoria,
-            activo: activo !== undefined ? activo : true 
-        });
-
-        res.status(201).json(nuevoProducto);
-    } catch (error) {
-        console.error('Error al crear el producto:', error);
-        res.status(500).json({ error: 'Hubo un problema al guardar el producto en la base de datos' });
-    }
-};
-
-module.exports = { obtenerProductos, crearProducto };
+module.exports = { obtenerProductos };
