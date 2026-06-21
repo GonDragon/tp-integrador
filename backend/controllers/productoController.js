@@ -1,4 +1,4 @@
-const { Producto } = require('../models');
+const { Producto, Imagen } = require('../models');
 
 const obtenerProductos = async (req, res) => {
     try {
@@ -11,6 +11,7 @@ const obtenerProductos = async (req, res) => {
         // Contar total de productos activos
         const { count, rows } = await Producto.findAndCountAll({
             where: { activo: true },
+            include: [{ model: Imagen }],
             offset,
             limit,
             order: [['id', 'ASC']]
@@ -24,7 +25,7 @@ const obtenerProductos = async (req, res) => {
             nombre: producto.nombre,
             detalles: producto.detalles,
             precio: parseFloat(producto.precio), // Convertir a número
-            imagen: producto.imagen,
+            imagen: producto.Imagen ? `${producto.Imagen.hash}${producto.Imagen.extension}` : null,
             categoria: producto.categoria,
             activo: producto.activo
         }));

@@ -80,7 +80,10 @@ router.get('/', verificarAdmin, async (req, res) => {
     const errorUrl = req.query.error;
 
     try {
-        const productos = await Producto.findAll({ order: [['id', 'DESC']] });
+        const productos = await Producto.findAll({ 
+            include: [{ model: Imagen }],
+            order: [['id', 'DESC']] 
+        });
         console.log(`📦 Dashboard cargado: Se encontraron ${productos.length} productos en la BD.`);
         
         res.render('admin/dashboard', { productos, mensaje, error: errorUrl || null });

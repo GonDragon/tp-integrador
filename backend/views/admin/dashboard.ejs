@@ -57,7 +57,11 @@
                                 <td class="ps-4 fw-bold text-muted">#<%= producto.id %></td>
                                 <td>
                                     <div class="bg-white rounded shadow-sm d-flex justify-content-center align-items-center" style="width: 50px; height: 50px;">
-                                        <img src="/img/<%= producto.imagen %>" alt="<%= producto.nombre %>" style="max-width: 40px; max-height: 40px; object-fit: contain;">
+                                        <% if (producto.Imagen) { %>
+                                            <img src="/img/productos/<%= producto.Imagen.hash %><%= producto.Imagen.extension %>" alt="<%= producto.nombre %>" style="max-width: 40px; max-height: 40px; object-fit: contain;">
+                                        <% } else { %>
+                                            <img src="/img/placeholder.png" alt="Sin imagen" style="max-width: 40px; max-height: 40px; object-fit: contain;">
+                                        <% } %>
                                     </div>
                                 </td>
                                 <td class="fw-bold"><%= producto.nombre %></td>
