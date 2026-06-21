@@ -22,7 +22,7 @@
                     </div>
                 <% } %>
 
-                <form action="/admin/productos/nuevo" method="POST">
+                <form action="/admin/productos/nuevo" method="POST" enctype="multipart/form-data">
                     
                     <div class="row g-3 mb-3">
                         <div class="col-12 col-md-8">
@@ -46,12 +46,9 @@
                             <input type="text" class="form-control border-0 shadow-sm" id="categoria" name="categoria" placeholder="Ej: Suplementos" required>
                         </div>
                         <div class="col-12 col-md-6">
-                            <label for="imagen" class="form-label fw-bold small text-muted text-uppercase">Nombre de la Foto</label>
-                            <div class="input-group shadow-sm rounded-3 overflow-hidden">
-                                <span class="input-group-text border-0 bg-white text-muted">/img/</span>
-                                <input type="text" class="form-control border-0" id="imagen" name="imagen" placeholder="proteina.png" required>
-                            </div>
-                            <div class="form-text small mt-1">Asegurate de que la foto ya esté subida a la carpeta public/img.</div>
+                            <label for="imagen" class="form-label fw-bold small text-muted text-uppercase">Imagen del Producto</label>
+                            <input type="file" class="form-control border-0 shadow-sm" id="imagen" name="imagen" accept="image/*" required>
+                            <div class="form-text small mt-1">Seleccioná una imagen para el producto.</div>
                         </div>
                     </div>
 

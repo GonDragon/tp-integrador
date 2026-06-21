@@ -22,7 +22,7 @@
                     </div>
                 <% } %>
 
-                <form action="/admin/productos/editar/<%= producto.id %>" method="POST">
+                <form action="/admin/productos/editar/<%= producto.id %>" method="POST" enctype="multipart/form-data">
                     
                     <div class="row g-3 mb-3">
                         <div class="col-12 col-md-8">
@@ -46,11 +46,9 @@
                             <input type="text" class="form-control border-0 shadow-sm" id="categoria" name="categoria" value="<%= producto.categoria %>" required>
                         </div>
                         <div class="col-12 col-md-6">
-                            <label for="imagen" class="form-label fw-bold small text-muted text-uppercase">Nombre de la Foto</label>
-                            <div class="input-group shadow-sm rounded-3 overflow-hidden">
-                                <span class="input-group-text border-0 bg-white text-muted">/img/</span>
-                                <input type="text" class="form-control border-0" id="imagen" name="imagen" value="<%= producto.imagen %>" required>
-                            </div>
+                            <label for="imagen" class="form-label fw-bold small text-muted text-uppercase">Imagen del Producto</label>
+                            <input type="file" class="form-control border-0 shadow-sm" id="imagen" name="imagen" accept="image/*">
+                            <div class="form-text small mt-1">Dejá vacío para mantener la imagen actual.</div>
                         </div>
                     </div>
 
