@@ -43,7 +43,11 @@
                     <div class="row g-3 mb-4">
                         <div class="col-12 col-md-6">
                             <label for="categoria" class="form-label fw-bold small text-muted text-uppercase">Categoría</label>
-                            <input type="text" class="form-control border-0 shadow-sm" id="categoria" name="categoria" value="<%= producto.categoria %>" required>
+                            <select class="form-select border-0 shadow-sm" id="categoria" name="categoria" required>
+                                <option value="" disabled>Seleccione una categoría</option>
+                                <option value="suplementos" <%= producto.categoria === 'suplementos' ? 'selected' : '' %>>Suplementos</option>
+                                <option value="servicios" <%= producto.categoria === 'servicios' ? 'selected' : '' %>>Servicios</option>
+                            </select>
                         </div>
                         <div class="col-12 col-md-6">
                             <label for="imagen" class="form-label fw-bold small text-muted text-uppercase">Imagen del Producto</label>

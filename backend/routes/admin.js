@@ -131,12 +131,16 @@ router.post('/productos/nuevo', verificarAdmin, upload.single('imagen'), async (
     try {
         const imagenId = await procesarImagen(req.file);
 
+        if (!categoria || categoria.trim() === '') {
+            return res.render('admin/nuevo_producto', { error: 'La categoría es obligatoria.' });
+        }
+
         const nuevoProd = await Producto.create({
             nombre: nombre,
             detalles: detalles,
             precio: parseFloat(precio),
             imagenId: imagenId,
-            categoria: categoria || 'General',
+            categoria: categoria,
             activo: activo === 'on' ? true : false 
         });
 
@@ -195,11 +199,16 @@ router.post('/productos/editar/:id', verificarAdmin, upload.single('imagen'), as
         }
         const imagenIdAnterior = productoAnterior.imagenId;
 
+        if (!categoria || categoria.trim() === '') {
+            const producto = await Producto.findByPk(id);
+            return res.render('admin/editar_producto', { producto, error: 'La categoría es obligatoria.' });
+        }
+
         const updateData = {
             nombre: nombre,
             detalles: detalles,
             precio: parseFloat(precio),
-            categoria: categoria || 'General',
+            categoria: categoria,
             activo: activo === 'on' ? true : false 
         };
 
