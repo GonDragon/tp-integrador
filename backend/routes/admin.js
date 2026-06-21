@@ -141,7 +141,7 @@ router.post('/productos/nuevo', verificarAdmin, upload.single('imagen'), async (
             precio: parseFloat(precio),
             imagenId: imagenId,
             categoria: categoria,
-            activo: activo === 'on' ? true : false 
+            activo: activo === 'on'
         });
 
         console.log("Producto guardado en MySQL con ID:", nuevoProd.id);
@@ -209,7 +209,7 @@ router.post('/productos/editar/:id', verificarAdmin, upload.single('imagen'), as
             detalles: detalles,
             precio: parseFloat(precio),
             categoria: categoria,
-            activo: activo === 'on' ? true : false 
+            activo: activo === 'on'
         };
 
         let nuevaImagenId = imagenIdAnterior;
