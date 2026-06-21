@@ -11,8 +11,6 @@ const clientRoutes = require('./routes/client');
 const adminRoutes = require('./routes/admin');
 const apiRoutes = require('./routes/api');
 
-const rutasProductos = require('./routes/productos');
-
 app.set('view engine', 'ejs');
 
 app.use(express.static('public'));
@@ -20,8 +18,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-
-app.use('/api/productos', rutasProductos);
 
 app.use('/', clientRoutes);
 app.use('/admin', adminRoutes);
