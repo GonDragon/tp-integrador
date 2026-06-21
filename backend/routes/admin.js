@@ -35,6 +35,32 @@ async function procesarImagen(file) {
     return imagen.id;
 }
 
+async function limpiarImagenSiNoSeUsa(imagenId) {
+    if (!imagenId) return;
+
+    try {
+        const uso = await Producto.count({ where: { imagenId: imagenId } });
+        
+        if (uso === 0) {
+            const imagen = await Imagen.findByPk(imagenId);
+            if (imagen) {
+                const fileName = `${imagen.hash}${imagen.extension}`;
+                const filePath = path.join(STORAGE_DIR, fileName);
+                
+                if (fs.existsSync(filePath)) {
+                    fs.unlinkSync(filePath);
+                    console.log(`Archivo de imagen eliminado: ${fileName}`);
+                }
+                
+                await Imagen.destroy({ where: { id: imagenId } });
+                console.log(`Registro de imagen ID ${imagenId} eliminado de la BD.`);
+            }
+        }
+    } catch (error) {
+        console.error(`Error al limpiar imagen ID ${imagenId}:`, error);
+    }
+}
+
 //MIDDLEWARE
 const verificarAdmin = (req, res, next) => {
     if (req.cookies.admin_session) {
@@ -125,11 +151,20 @@ router.post('/productos/nuevo', verificarAdmin, upload.single('imagen'), async (
 router.post('/productos/eliminar/:id', verificarAdmin, async (req, res) => {
     try {
         const id = req.params.id;
+
+        const producto = await Producto.findByPk(id);
+        const imagenIdAnterior = producto ? producto.imagenId : null;
+
         await Producto.destroy({ where: { id: id } });
-        console.log(`🗑️ Producto con ID ${id} eliminado.`);
+        console.log(`Producto con ID ${id} eliminado.`);
+
+        if (imagenIdAnterior) {
+            await limpiarImagenSiNoSeUsa(imagenIdAnterior);
+        }
+
         res.redirect('/admin?mensaje=eliminado');
     } catch (error) {
-        console.error('❌ Error al eliminar producto:', error);
+        console.error('Error al eliminar producto:', error);
         res.redirect('/admin?error=No se pudo eliminar el producto por un error interno.');
     }
 });
@@ -144,7 +179,7 @@ router.get('/productos/editar/:id', verificarAdmin, async (req, res) => {
         }
         res.render('admin/editar_producto', { producto, error: null });
     } catch (error) {
-        console.error('❌ Error al buscar producto para editar:', error);
+        console.error('Error al buscar producto para editar:', error);
         res.redirect('/admin?error=Error al cargar la pantalla de edición.');
     }
 });
@@ -154,6 +189,12 @@ router.post('/productos/editar/:id', verificarAdmin, upload.single('imagen'), as
     const { nombre, detalles, precio, categoria, activo } = req.body;
     
     try {
+        const productoAnterior = await Producto.findByPk(id);
+        if (!productoAnterior) {
+            return res.redirect('/admin?error=Producto no encontrado.');
+        }
+        const imagenIdAnterior = productoAnterior.imagenId;
+
         const updateData = {
             nombre: nombre,
             detalles: detalles,
@@ -162,18 +203,25 @@ router.post('/productos/editar/:id', verificarAdmin, upload.single('imagen'), as
             activo: activo === 'on' ? true : false 
         };
 
+        let nuevaImagenId = imagenIdAnterior;
         if (req.file) {
-            updateData.imagenId = await procesarImagen(req.file);
+            nuevaImagenId = await procesarImagen(req.file);
+            updateData.imagenId = nuevaImagenId;
         }
 
         await Producto.update(updateData, {
             where: { id: id }
         });
 
-        console.log(`✅ Producto con ID ${id} actualizado correctamente.`);
+        console.log(`Producto con ID ${id} actualizado correctamente.`);
+
+        if (req.file && imagenIdAnterior && nuevaImagenId !== imagenIdAnterior) {
+            await limpiarImagenSiNoSeUsa(imagenIdAnterior);
+        }
+
         res.redirect('/admin?mensaje=editado');
     } catch (error) {
-        console.error('❌ Error al editar:', error.message);
+        console.error('Error al editar:', error.message);
         const producto = await Producto.findByPk(id);
         res.render('admin/editar_producto', { producto, error: 'Error al actualizar: ' + error.message });
     }
