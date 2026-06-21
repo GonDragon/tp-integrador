@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            productos.forEach(producto => {
+            productos.data.forEach(producto => {
                 const cardHtml = `
                     <div class="col-12 col-md-6 col-lg-3">
                         <div class="card h-100 border-0 shadow-sm bg-body-tertiary text-start">
@@ -66,6 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 carrito.push({ id, nombre, precio, cantidad: 1 });
             }
+
 
             localStorage.setItem('carrito_gym', JSON.stringify(carrito));
             alert(`¡Sumaste 1x ${nombre} al carrito!`);
