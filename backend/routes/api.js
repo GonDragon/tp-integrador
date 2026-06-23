@@ -5,10 +5,12 @@ const { obtenerProductos } = require('../controllers/productoController');
 
 /**
  * GET /api/productos/
- * Retorna la lista de todos los productos en formato JSON.
- * Se utiliza para obtener los datos de los productos desde el cliente.
- * 
- * @returns {Object[]} 200 - Un arreglo de objetos de productos.
+ * Retorna la lista paginada de productos activos en JSON.
+ * Soporta query params `page` y `limit` para paginación (ver `productoController.obtenerProductos`).
+ *
+ * @query {number} [page=1] - Página a devolver.
+ * @query {number} [limit=6] - Cantidad de items por página.
+ * @returns {Object} 200 - Objeto con `data` (array de productos) y `pagination`.
  */
 router.get('/productos/', obtenerProductos);
 

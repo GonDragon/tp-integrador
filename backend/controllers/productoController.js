@@ -1,5 +1,16 @@
 const { Producto, Imagen } = require('../models');
 
+/**
+ * obtenerProductos
+ * Controlador que devuelve los productos activos en formato paginado JSON.
+ * Soporta query params `page` y `limit` para controlar paginación.
+ *
+ * Respuesta:
+ * {
+ *   data: [{ id, nombre, detalles, precio, imagen, categoria, activo }],
+ *   pagination: { page, limit, total, totalPages, hasNextPage, hasPrevPage }
+ * }
+ */
 const obtenerProductos = async (req, res) => {
     try {
         // Obtener parámetros de paginación desde query string

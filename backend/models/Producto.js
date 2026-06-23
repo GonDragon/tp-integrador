@@ -1,3 +1,8 @@
+/**
+ * Modelo Producto
+ * Representa un producto del catálogo con atributos básicos:
+ * - `nombre`, `detalles`, `precio`, `categoria`, `activo` y relación con `Imagen`.
+ */
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/db');
 const Imagen = require('./Imagen');

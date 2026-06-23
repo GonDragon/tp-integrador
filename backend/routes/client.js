@@ -1,8 +1,25 @@
+/**
+ * Rutas de cliente
+ *
+ * Este archivo expone las rutas públicas que usa el cliente en la interfaz web:
+ * - `/`             : formulario de ingreso de nombre
+ * - `/catalogo`     : catálogo de productos (requiere identificación)
+ * - `/carrito`      : vista del carrito (requiere identificación)
+ * - `/recibo`       : procesa y muestra el recibo
+ *
+ * La autenticación es muy ligera: se guarda el nombre en una cookie `cliente`.
+ */
 const express = require('express');
 const router = express.Router();
 const { Producto } = require('../models');
 
-//Middlewares
+// Middlewares
+/**
+ * verificarCliente
+ * Comprueba que exista una cookie `cliente` válida o que venga `req.query.nombre`.
+ * Si el cliente provee `nombre` en query se setea la cookie y continúa.
+ * Si no hay cookie ni nombre, redirige a la página de inicio (`/`).
+ */
 const verificarCliente = (req, res, next) => {
     const cookieCliente = req.cookies.cliente;
     const nombreParam = req.query.nombre;
@@ -26,7 +43,7 @@ const verificarCliente = (req, res, next) => {
     return res.redirect('/');
 };
 
-//Rutas
+// Rutas
 /**
  * GET /
  * Muestra la página de bienvenida donde el cliente ingresa su nombre.
@@ -37,10 +54,11 @@ router.get('/', (req, res) => {
 
 /**
  * GET /catalogo
- * Muestra el catálogo de productos disponibles para el cliente.
- * Requiere que el cliente esté identificado.
- * 
- * @param {string} [req.query.nombre] - Nombre del cliente (si viene de la redirección inicial).
+ * Renderiza el catálogo de productos activos.
+ * Requiere identificación del cliente vía cookie `cliente` o query `nombre`.
+ *
+ * @param {string} [req.query.nombre] - Nombre del cliente (opcional, usado en redirecciones).
+ * @returns {HTML} Vista `client/catalogo` con `cliente` y `productos`.
  */
 router.get('/catalogo', verificarCliente, async (req, res) => {
     const cliente = req.cookies.cliente || req.query.nombre;
@@ -56,8 +74,8 @@ router.get('/catalogo', verificarCliente, async (req, res) => {
 
 /**
  * GET /carrito
- * Muestra la página del carrito de compras del cliente.
- * Requiere que el cliente esté identificado.
+ * Muestra la página del carrito de compras del cliente. Requiere identificación.
+ * @returns {HTML} Vista `client/carrito` con `cliente`.
  */
 router.get('/carrito', verificarCliente, (req, res) => {
     const cliente = req.cookies.cliente || req.query.nombre;
@@ -66,10 +84,11 @@ router.get('/carrito', verificarCliente, (req, res) => {
 
 /**
  * POST /recibo
- * Procesa el carrito de compras y muestra el recibo final.
- * Requiere que el cliente esté identificado.
- * 
+ * Procesa los datos del carrito enviados desde el cliente y renderiza el recibo.
+ * Espera `req.body.carritoData` (JSON string) con los items: id, nombre, precio, cantidad.
+ *
  * @param {string} req.body.carritoData - Cadena JSON que contiene los items del carrito.
+ * @returns {HTML} Vista `client/recibo` con `cliente`, `carrito` y `total`.
  */
 router.post('/recibo', verificarCliente, (req, res) => {
     const cliente = req.cookies.cliente || 'Atleta';
