@@ -27,10 +27,21 @@ const verificarCliente = (req, res, next) => {
 };
 
 //Rutas
+/**
+ * GET /
+ * Muestra la página de bienvenida donde el cliente ingresa su nombre.
+ */
 router.get('/', (req, res) => {
     res.render('client/datos_cliente');
 });
 
+/**
+ * GET /catalogo
+ * Muestra el catálogo de productos disponibles para el cliente.
+ * Requiere que el cliente esté identificado.
+ * 
+ * @param {string} [req.query.nombre] - Nombre del cliente (si viene de la redirección inicial).
+ */
 router.get('/catalogo', verificarCliente, async (req, res) => {
     const cliente = req.cookies.cliente || req.query.nombre;
     
@@ -43,11 +54,23 @@ router.get('/catalogo', verificarCliente, async (req, res) => {
     }
 });
 
+/**
+ * GET /carrito
+ * Muestra la página del carrito de compras del cliente.
+ * Requiere que el cliente esté identificado.
+ */
 router.get('/carrito', verificarCliente, (req, res) => {
     const cliente = req.cookies.cliente || req.query.nombre;
     res.render('client/carrito', { cliente });
 });
 
+/**
+ * POST /recibo
+ * Procesa el carrito de compras y muestra el recibo final.
+ * Requiere que el cliente esté identificado.
+ * 
+ * @param {string} req.body.carritoData - Cadena JSON que contiene los items del carrito.
+ */
 router.post('/recibo', verificarCliente, (req, res) => {
     const cliente = req.cookies.cliente || 'Atleta';
     const carritoCrudo = req.body.carritoData;

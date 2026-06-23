@@ -70,6 +70,11 @@ const verificarAdmin = (req, res, next) => {
 };
 
 
+/**
+ * GET /admin/login
+ * Muestra la página de inicio de sesión para el administrador.
+ * Si ya existe una sesión activa, redirige al dashboard.
+ */
 router.get('/login', (req, res) => {
     if (req.cookies.admin_session) {
         return res.redirect('/admin');
@@ -77,6 +82,14 @@ router.get('/login', (req, res) => {
     res.render('admin/login', { error: null });
 });
 
+/**
+ * POST /admin/login
+ * Procesa el inicio de sesión del administrador.
+ * Verifica las credenciales contra la base de datos y establece una cookie de sesión si son correctas.
+ * 
+ * @param {string} req.body.usuario - Nombre de usuario del administrador.
+ * @param {string} req.body.password - Contraseña del administrador.
+ */
 router.post('/login', async (req, res) => {
     const { usuario, password } = req.body;
 
@@ -101,6 +114,14 @@ router.post('/login', async (req, res) => {
     }
 });
 
+/**
+ * GET /admin
+ * Muestra el dashboard de administración con la lista de productos.
+ * Requiere autenticación de administrador.
+ * 
+ * @param {string} [req.query.mensaje] - Código de mensaje para mostrar notificaciones de éxito.
+ * @param {string} [req.query.error] - Mensaje de error para mostrar en el dashboard.
+ */
 router.get('/', verificarAdmin, async (req, res) => {
     const mensaje = req.query.mensaje; 
     const errorUrl = req.query.error;
@@ -119,10 +140,27 @@ router.get('/', verificarAdmin, async (req, res) => {
     }
 });
 
+/**
+ * GET /admin/productos/nuevo
+ * Muestra el formulario para crear un nuevo producto.
+ * Requiere autenticación de administrador.
+ */
 router.get('/productos/nuevo', verificarAdmin, (req, res) => {
     res.render('admin/nuevo_producto', { error: null });
 });
 
+/**
+ * POST /admin/productos/nuevo
+ * Crea un nuevo producto en la base de datos, incluyendo la carga de su imagen.
+ * Requiere autenticación de administrador.
+ * 
+ * @param {string} req.body.nombre - Nombre del producto.
+ * @param {string} req.body.detalles - Descripción detallada del producto.
+ * @param {number} req.body.precio - Precio del producto.
+ * @param {string} req.body.categoria - Categoría del producto.
+ * @param {string} [req.body.activo] - Estado del producto ('on' si está activo).
+ * @param {File} req.file - Archivo de imagen del producto.
+ */
 router.post('/productos/nuevo', verificarAdmin, upload.single('imagen'), async (req, res) => {
     const { nombre, detalles, precio, categoria, activo } = req.body;
     
@@ -141,7 +179,7 @@ router.post('/productos/nuevo', verificarAdmin, upload.single('imagen'), async (
             precio: parseFloat(precio),
             imagenId: imagenId,
             categoria: categoria,
-            activo: activo === 'on'
+            activo: activo === 'on' // No seria mejor usar un bool directamente?
         });
 
         console.log("Producto guardado en MySQL con ID:", nuevoProd.id);
@@ -152,6 +190,14 @@ router.post('/productos/nuevo', verificarAdmin, upload.single('imagen'), async (
     }
 });
 
+/**
+ * POST /admin/productos/eliminar/:id
+ * Elimina un producto de la base de datos por su ID.
+ * También limpia la imagen asociada si no está siendo usada por otros productos.
+ * Requiere autenticación de administrador.
+ * 
+ * @param {number} req.params.id - ID del producto a eliminar.
+ */
 router.post('/productos/eliminar/:id', verificarAdmin, async (req, res) => {
     try {
         const id = req.params.id;
@@ -173,6 +219,13 @@ router.post('/productos/eliminar/:id', verificarAdmin, async (req, res) => {
     }
 });
 
+/**
+ * GET /admin/productos/editar/:id
+ * Muestra el formulario para editar un producto existente.
+ * Requiere autenticación de administrador.
+ * 
+ * @param {number} req.params.id - ID del producto a editar.
+ */
 router.get('/productos/editar/:id', verificarAdmin, async (req, res) => {
     try {
         const id = req.params.id;
@@ -188,6 +241,20 @@ router.get('/productos/editar/:id', verificarAdmin, async (req, res) => {
     }
 });
 
+/**
+ * POST /admin/productos/editar/:id
+ * Actualiza los datos de un producto existente.
+ * Permite cambiar la imagen, gestionando la limpieza de la imagen anterior si corresponde.
+ * Requiere autenticación de administrador.
+ * 
+ * @param {number} req.params.id - ID del producto a actualizar.
+ * @param {string} req.body.nombre - Nuevo nombre del producto.
+ * @param {string} req.body.detalles - Nueva descripción del producto.
+ * @param {number} req.body.precio - Nuevo precio del producto.
+ * @param {string} req.body.categoria - Nueva categoría del producto.
+ * @param {string} [req.body.activo] - Nuevo estado del producto ('on' si está activo).
+ * @param {File} [req.file] - Nueva imagen del producto (opcional).
+ */
 router.post('/productos/editar/:id', verificarAdmin, upload.single('imagen'), async (req, res) => {
     const id = req.params.id;
     const { nombre, detalles, precio, categoria, activo } = req.body;
@@ -209,7 +276,7 @@ router.post('/productos/editar/:id', verificarAdmin, upload.single('imagen'), as
             detalles: detalles,
             precio: parseFloat(precio),
             categoria: categoria,
-            activo: activo === 'on'
+            activo: activo === 'on' // No seria mejor usar un bool directamente?
         };
 
         let nuevaImagenId = imagenIdAnterior;
@@ -236,6 +303,10 @@ router.post('/productos/editar/:id', verificarAdmin, upload.single('imagen'), as
     }
 });
 
+/**
+ * GET /admin/logout
+ * Cierra la sesión del administrador eliminando la cookie de sesión.
+ */
 router.get('/logout', (req, res) => {
     res.clearCookie('admin_session');
     res.redirect('/admin/login');
