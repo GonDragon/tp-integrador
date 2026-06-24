@@ -8,13 +8,12 @@ const STORAGE_DIR = process.env.STORAGE_DIR || path.join(__dirname, '../../stora
 
 /**
  * GET /:filename
+ * Sirve una imagen de producto desde el directorio de almacenamiento (`STORAGE_DIR`).
+ * Protegemos contra path traversal usando `path.basename` antes de construir la ruta.
  *
- * Sirve una imagen de producto desde el directorio de almacenamiento (STORAGE_DIR).
- *
- * @route   GET /:filename
- * @param   {string} req.params.filename - Nombre del archivo de imagen solicitado.
- * @returns {file}   200 - El archivo de imagen solicitado (vía res.sendFile).
- * @returns {string} 404 - "Imagen no encontrada" si el archivo no existe en STORAGE_DIR.
+ * @param {string} req.params.filename - Nombre del archivo de imagen solicitado (e.g. "abcd1234.jpg").
+ * @returns {file} 200 - Envia el archivo con `res.sendFile`.
+ * @returns {string} 404 - Texto "Imagen no encontrada" si no existe el fichero.
  */
 router.get('/:filename', (req, res) => {
     const filename = path.basename(req.params.filename); //Necesario para evitar un path traversal

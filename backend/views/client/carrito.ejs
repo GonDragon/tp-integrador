@@ -21,13 +21,32 @@
             <form id="form-checkout" action="/recibo" method="POST" class="col-12 col-md-6 text-center text-md-end">
                 <input type="hidden" name="carritoData" id="input-carrito-data">
 
-                <button type="submit" id="btn-pagar" class="btn btn-primary btn-lg fw-bold text-uppercase px-5 w-100 w-md-auto">
+                <button type="button" id="btn-confirmar-pago" class="btn btn-primary btn-lg fw-bold text-uppercase px-5 w-100 w-md-auto">
                     Pagar
                 </button>
             </form>
         </div>
     </div>
 </main>
+
+<!-- Modal de Confirmación -->
+<div class="modal fade" id="modalConfirmacion" tabindex="-1" aria-labelledby="modalConfirmacionLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 shadow border-0">
+            <div class="modal-header border-bottom-0 pb-0">
+                <h5 class="modal-title fw-bold text-uppercase" id="modalConfirmacionLabel">Confirmar Compra</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body py-4">
+                <p class="fs-5 mb-0">¿Estás seguro de que deseas realizar la compra por un total de <span class="fw-bold text-primary">$<span id="total-modal">0</span></span>?</p>
+            </div>
+            <div class="modal-footer border-top-0 pt-0">
+                <button type="button" class="btn btn-outline-secondary fw-bold text-uppercase rounded-3 px-4" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" id="btn-finalizar-compra" class="btn btn-primary fw-bold text-uppercase rounded-3 px-4">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="/js/carrito.js"></script>
 

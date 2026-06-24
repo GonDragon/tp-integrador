@@ -1,0 +1,74 @@
+[
+  {
+    "id": 1,
+    "nombre": "Toalla",
+    "detalles": "Toalla de algodón ideal para el secado del sudor durante el entrenamiento.",
+    "precio": 1500,
+    "imagen": "../Toalla.png",
+    "categoria": "servicios"
+  },
+  {
+    "id": 2,
+    "nombre": "Straps",
+    "detalles": "Correas de agarre para optimizar el levantamiento de peso pesado y proteger el agarre.",
+    "precio": 3500,
+    "imagen": "../Straps.png",
+    "categoria": "servicios"
+  },
+  {
+    "id": 3,
+    "nombre": "Proteina",
+    "detalles": "Suplemento de proteína de suero de leche en polvo para la recuperación muscular.",
+    "precio": 25000,
+    "imagen": "../Proteina.png",
+    "categoria": "suplementos"
+  },
+  {
+    "id": 4,
+    "nombre": "Magnesio",
+    "detalles": "Magnesio en polvo para mejorar el agarre y evitar el deslizamiento en barras.",
+    "precio": 2000,
+    "imagen": "../Magnesio.png",
+    "categoria": "suplementos"
+  },
+  {
+    "id": 5,
+    "nombre": "Lockers",
+    "detalles": "Servicio de casillero seguro para el resguardo de pertenencias personales.",
+    "precio": 5000,
+    "imagen": "../Lockers.png",
+    "categoria": "servicios"
+  },
+  {
+    "id": 6,
+    "nombre": "Faja",
+    "detalles": "Cinturón de levantamiento de pesas para soporte lumbar en ejercicios compuestos.",
+    "precio": 12000,
+    "imagen": "../Faja.png",
+    "categoria": "servicios"
+  },
+  {
+    "id": 7,
+    "nombre": "Energisante",
+    "detalles": "Bebida energética para potenciar el rendimiento y la concentración en el entrenamiento.",
+    "precio": 1800,
+    "imagen": "../Energisante.png",
+    "categoria": "suplementos"
+  },
+  {
+    "id": 8,
+    "nombre": "BebidaIso",
+    "detalles": "Bebida isotónica diseñada para la rehidratación y reposición de electrolitos.",
+    "precio": 1600,
+    "imagen": "../BebidaIso.png",
+    "categoria": "suplementos"
+  },
+  {
+    "id": 9,
+    "nombre": "Batido",
+    "detalles": "Batido preparado proteico ideal para consumir post-entrenamiento.",
+    "precio": 3000,
+    "imagen": "../Batido.png",
+    "categoria": "suplementos"
+  }
+]

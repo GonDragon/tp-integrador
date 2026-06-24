@@ -6,7 +6,7 @@ const initialize = async () => {
     try {
         await connectDB();
 
-        await sequelize.sync({ force: false });
+        await sequelize.sync({ force: true });
         console.log('Base de datos sincronizada para inicialización.');
 
         const adminExists = await Admin.findOne({ where: { username: 'admin' } });

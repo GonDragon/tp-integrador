@@ -2,8 +2,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const listaCarrito = document.getElementById('lista-carrito');
     const precioTotal = document.getElementById('precio-total');
     const inputCarritoData = document.getElementById('input-carrito-data');
-    const btnPagar = document.getElementById('btn-pagar');
+    const btnConfirmarPago = document.getElementById('btn-confirmar-pago');
+    const btnFinalizarCompra = document.getElementById('btn-finalizar-compra');
+    const totalModal = document.getElementById('total-modal');
     const formCheckout = document.getElementById('form-checkout');
+    const modalConfirmacion = new bootstrap.Modal(document.getElementById('modalConfirmacion'));
 
     let carrito = JSON.parse(localStorage.getItem('carrito_gym')) || [];
 
@@ -17,12 +20,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     🛒 Tu carrito está vacío. ¡Volvé al catálogo para sumar productos!
                 </div>`;
             precioTotal.textContent = '0';
-            btnPagar.disabled = true;
+            btnConfirmarPago.disabled = true;
             inputCarritoData.value = '';
             return;
         }
 
-        btnPagar.disabled = false;
+        btnConfirmarPago.disabled = false;
 
         carrito.forEach((producto, index) => {
             const subtotal = producto.precio * producto.cantidad;
@@ -50,6 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         precioTotal.textContent = total.toFixed(2);
+        totalModal.textContent = total.toFixed(2);
 
         inputCarritoData.value = JSON.stringify(carrito);
 
@@ -64,4 +68,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     renderizarCarrito();
+
+    btnConfirmarPago.addEventListener('click', () => {
+        modalConfirmacion.show();
+    });
+
+    btnFinalizarCompra.addEventListener('click', () => {
+        formCheckout.submit();
+    });
 });
