@@ -2,7 +2,27 @@ const express = require('express');
 const router = express.Router();
 const { obtenerProductos } = require('../controllers/productoController');
 const bcrypt = require('bcrypt');
-const { Admin } = require('../models');
+const { Admin, Venta, Producto } = require('../models');
+
+
+/**
+ * GET /api/listadoVentas
+ * Retorna la lista de todas las ventas con sus productos incrustados.
+ */
+router.get('/listadoVentas', async (req, res) => {
+    try {
+        const ventas = await Venta.findAll({
+            include: [{
+                model: Producto,
+                through: { attributes: ['cantidad', 'precioUnitario'] }
+            }]
+        });
+        res.json(ventas);
+    } catch (error) {
+        console.error('Error al obtener el listado de ventas:', error);
+        res.status(500).json({ error: 'Error al obtener el listado de ventas' });
+    }
+});
 
 
 /**
