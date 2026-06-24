@@ -18,7 +18,7 @@ const STORAGE_DIR = process.env.STORAGE_DIR || path.join(__dirname, '../../stora
 router.get('/:filename', (req, res) => {
     const filename = path.basename(req.params.filename); //Necesario para evitar un path traversal
     const filePath = path.join(STORAGE_DIR, filename);
-
+ 
     if (!fs.existsSync(filePath)) {
         return res.status(404).send('Imagen no encontrada');
     }

@@ -17,3 +17,14 @@
   height: 3px;
   background-color: #fd7e14;
 }
+
+/* Estilos para botones de categoría seleccionados */
+.btn-categoria.active {
+  color: #ffffff !important;
+  background-color: #0d6efd !important;
+  border-color: #0d6efd !important;
+}
+
+.btn-categoria.active .fw-bold {
+  color: #ffffff !important;
+}

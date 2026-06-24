@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.addEventListener('click', () => {
                 const categoria = btn.getAttribute('data-category');
                 if (!categoria) return;
-                const filtrados = productosGlobal.filter(p => String(p.categoria) === String(categoria));
+                const filtrados = productosGlobal.filter(p => String(p.categoria).toLowerCase() === String(categoria).toLowerCase());
                 renderProductos(filtrados);
 
                 // marcar como activo visualmente
