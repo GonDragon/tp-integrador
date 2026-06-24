@@ -11,7 +11,7 @@
  */
 const express = require('express');
 const router = express.Router();
-const { Producto, Venta } = require('../models');
+const { Producto, Venta, VentaProducto} = require('../models');
 
 // Middlewares
 /**
@@ -120,12 +120,22 @@ router.post('/recibo', verificarCliente, async (req, res) => {
     }
 
     try {
-        await Venta.create({
+        const nuevaVenta = await Venta.create({
             nombre_cliente: cliente,
             total: totalPagado
         });
+
+        if (carrito.length > 0) {
+            const detalles = carrito.map(item => ({
+                ventaId: nuevaVenta.id,
+                productoId: item.id,
+                cantidad: item.cantidad,
+                precioUnitario: item.precio
+            }));
+            await VentaProducto.bulkCreate(detalles);
+        }
     } catch (error) {
-        console.error('Error al guardar la venta:', error);
+        console.error('Error al guardar la venta y sus detalles:', error);
     }
 
     res.render('client/recibo', {
