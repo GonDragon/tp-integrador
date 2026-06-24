@@ -11,7 +11,7 @@
  */
 const express = require('express');
 const router = express.Router();
-const { Producto } = require('../models');
+const { Producto, Venta } = require('../models');
 
 // Middlewares
 /**
@@ -86,11 +86,12 @@ router.get('/carrito', verificarCliente, (req, res) => {
  * POST /recibo
  * Procesa los datos del carrito enviados desde el cliente y renderiza el recibo.
  * Espera `req.body.carritoData` (JSON string) con los items: id, nombre, precio, cantidad.
+ * Guarda la venta en la base de datos.
  *
  * @param {string} req.body.carritoData - Cadena JSON que contiene los items del carrito.
  * @returns {HTML} Vista `client/recibo` con `cliente`, `carrito` y `total`.
  */
-router.post('/recibo', verificarCliente, (req, res) => {
+router.post('/recibo', verificarCliente, async (req, res) => {
     const cliente = req.cookies.cliente || 'Atleta';
     const carritoCrudo = req.body.carritoData;
 
@@ -113,9 +114,18 @@ router.post('/recibo', verificarCliente, (req, res) => {
                 });
             }
         } catch (error) {
-            console.error('🚨 Error crítico: JSON malformado en el carrito:', error);
+            console.error('Error crítico: JSON malformado en el carrito:', error);
             return res.redirect('/catalogo');
         }
+    }
+
+    try {
+        await Venta.create({
+            nombre_cliente: cliente,
+            total: totalPagado
+        });
+    } catch (error) {
+        console.error('Error al guardar la venta:', error);
     }
 
     res.render('client/recibo', {
