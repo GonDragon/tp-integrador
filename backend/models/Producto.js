@@ -1,7 +1,7 @@
 /**
  * Modelo Producto
  * Representa un producto del catálogo con atributos básicos:
- * - `nombre`, `detalles`, `precio`, `categoria`, `activo` y relación con `Imagen`.
+ * - `nombre`, `detalles`, `precio`, `categoria`, `activo`, `stock` y relación con `Imagen`.
  */
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/db');
@@ -13,7 +13,8 @@ const Producto = sequelize.define('Producto', {
     precio: { type: DataTypes.DECIMAL(10, 2), allowNull: false },
     imagenId: { type: DataTypes.INTEGER, allowNull: true, references: { model: Imagen, key: 'id' }},
     categoria: { type: DataTypes.STRING, allowNull: false },
-    activo: { type: DataTypes.BOOLEAN, defaultValue: true } 
+    activo: { type: DataTypes.BOOLEAN, defaultValue: true },
+    stock: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 }
 }, {
     timestamps: false
 });

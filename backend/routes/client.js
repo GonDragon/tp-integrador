@@ -11,7 +11,7 @@
  */
 const express = require('express');
 const router = express.Router();
-const { Producto, Venta, VentaProducto} = require('../models');
+const { Producto, Venta, VentaProducto, sequelize } = require('../models');
 
 // Middlewares
 /**
@@ -119,30 +119,73 @@ router.post('/recibo', verificarCliente, async (req, res) => {
         }
     }
 
+    // Transacción ACID: insert Venta + VentaProducto + descuento de stock de forma atómica.
+    // Si cualquier paso falla (stock insuficiente, error de BD, etc.) se hace rollback completo.
     try {
-        const nuevaVenta = await Venta.create({
-            nombre_cliente: cliente,
-            total: totalPagado
+        await sequelize.transaction(async (t) => {
+
+            // 1. Validar stock de cada producto con bloqueo pesimista (FOR UPDATE)
+            //    para evitar condiciones de carrera con compras concurrentes.
+            for (const item of carrito) {
+                const producto = await Producto.findByPk(item.id, {
+                    lock: t.LOCK.UPDATE,
+                    transaction: t
+                });
+
+                if (!producto) {
+                    throw new Error(`El producto "${item.nombre}" (ID: ${item.id}) ya no existe en el catálogo.`);
+                }
+
+                if (producto.stock < item.cantidad) {
+                    throw new Error(
+                        `Stock insuficiente para "${producto.nombre}": ` +
+                        `solicitaste ${item.cantidad} unidad(es) pero solo hay ${producto.stock} disponible(s).`
+                    );
+                }
+            }
+
+            // 2. Crear la cabecera de la venta
+            const nuevaVenta = await Venta.create({
+                nombre_cliente: cliente,
+                total: totalPagado
+            }, { transaction: t });
+
+            // 3. Insertar los detalles (VentaProducto) y descontar el stock en paralelo
+            await Promise.all(carrito.map(async (item) => {
+                await VentaProducto.create({
+                    ventaId: nuevaVenta.id,
+                    productoId: item.id,
+                    cantidad: item.cantidad,
+                    precioUnitario: item.precio
+                }, { transaction: t });
+
+                await Producto.decrement('stock', {
+                    by: item.cantidad,
+                    where: { id: item.id },
+                    transaction: t
+                });
+            }));
+
+            console.log(`✅ Venta ID ${nuevaVenta.id} registrada para "${cliente}" | Total: $${totalPagado}`);
         });
 
-        if (carrito.length > 0) {
-            const detalles = carrito.map(item => ({
-                ventaId: nuevaVenta.id,
-                productoId: item.id,
-                cantidad: item.cantidad,
-                precioUnitario: item.precio
-            }));
-            await VentaProducto.bulkCreate(detalles);
-        }
-    } catch (error) {
-        console.error('Error al guardar la venta y sus detalles:', error);
-    }
+        // Transacción exitosa: mostrar recibo
+        res.render('client/recibo', {
+            cliente,
+            carrito,
+            total: totalPagado,
+            error: null
+        });
 
-    res.render('client/recibo', {
-        cliente,
-        carrito,
-        total: totalPagado
-    });
+    } catch (error) {
+        // Rollback automático al salir del callback con error.
+        // Mostramos el mensaje descriptivo al usuario en la vista del carrito.
+        console.error('Error al procesar la compra (rollback ejecutado):', error.message);
+        res.render('client/carrito', {
+            cliente,
+            error: error.message || 'Ocurrió un error al procesar tu compra. Intentá de nuevo.'
+        });
+    }
 });
 
 module.exports = router;

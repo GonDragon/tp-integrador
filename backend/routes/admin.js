@@ -1,11 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const { Admin, Producto, Imagen } = require('../models');
 const multer = require('multer');
 const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
+
+const JWT_SECRET = process.env.JWT_SECRET || 'clave_secreta_dev_cambiar_en_produccion';
+const JWT_EXPIRY = '8h';
 
 // CONFIGURACIÓN DE MULTER
 const storage = multer.memoryStorage();
@@ -61,12 +65,30 @@ async function limpiarImagenSiNoSeUsa(imagenId) {
     }
 }
 
-//MIDDLEWARE
+// MIDDLEWARE
+/**
+ * verificarAdmin
+ * Valida el token JWT almacenado en la cookie `admin_session`.
+ * Si el token es válido, expone `req.adminId` y `req.adminUsername` al siguiente handler.
+ * Si el token es inválido, expiró o no existe, redirige a la página de login.
+ */
 const verificarAdmin = (req, res, next) => {
-    if (req.cookies.admin_session) {
-        return next();
+    const token = req.cookies.admin_session;
+
+    if (!token) {
+        return res.redirect('/admin/login');
     }
-    res.redirect('/admin/login');
+
+    try {
+        const payload = jwt.verify(token, JWT_SECRET);
+        req.adminId = payload.id;
+        req.adminUsername = payload.username;
+        return next();
+    } catch (err) {
+        // Token inválido o expirado
+        res.clearCookie('admin_session');
+        return res.redirect('/admin/login');
+    }
 };
 
 
@@ -103,7 +125,20 @@ router.post('/login', async (req, res) => {
         const passwordValida = await bcrypt.compare(password, adminUser.hash);
 
         if (passwordValida) {
-            res.cookie('admin_session', adminUser.id, { httpOnly: true });
+            // Generar token JWT firmado con el id y username del admin
+            const token = jwt.sign(
+                { id: adminUser.id, username: adminUser.username },
+                JWT_SECRET,
+                { expiresIn: JWT_EXPIRY }
+            );
+
+            // Guardar el JWT en una cookie httpOnly para protegerlo de acceso JS del cliente
+            res.cookie('admin_session', token, {
+                httpOnly: true,
+                sameSite: 'strict'
+            });
+
+            console.log(`✅ Login exitoso para el admin: ${adminUser.username} (ID: ${adminUser.id})`);
             return res.redirect('/admin');
         } else {
             return res.render('admin/login', { error: 'Usuario o contraseña incorrectos' });
