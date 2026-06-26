@@ -19,9 +19,15 @@ const obtenerProductos = async (req, res) => {
 
         const offset = (page - 1) * limit;
 
-        // Contar total de productos activos
+        const categoriaFiltro = req.query.categoria;
+        const whereClause = { activo: true };
+        if (categoriaFiltro) {
+            whereClause.categoria = categoriaFiltro;
+        }
+
+        // Contar total de productos activos (con filtro opcional)
         const { count, rows } = await Producto.findAndCountAll({
-            where: { activo: true },
+            where: whereClause,
             include: [{ model: Imagen }],
             offset,
             limit,

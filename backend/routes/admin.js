@@ -227,31 +227,44 @@ router.post('/productos/nuevo', verificarAdmin, upload.single('imagen'), async (
 });
 
 /**
- * POST /admin/productos/eliminar/:id
- * Elimina un producto de la base de datos por su ID.
- * También limpia la imagen asociada si no está siendo usada por otros productos.
+ * POST /admin/productos/desactivar/:id
+ * Desactiva un producto de la base de datos por su ID (baja lógica).
  * Requiere autenticación de administrador.
  * 
- * @param {number} req.params.id - ID del producto a eliminar.
+ * @param {number} req.params.id - ID del producto a desactivar.
  */
-router.post('/productos/eliminar/:id', verificarAdmin, async (req, res) => {
+router.post('/productos/desactivar/:id', verificarAdmin, async (req, res) => {
     try {
         const id = req.params.id;
 
-        const producto = await Producto.findByPk(id);
-        const imagenIdAnterior = producto ? producto.imagenId : null;
+        await Producto.update({ activo: false }, { where: { id: id } });
+        console.log(`Producto con ID ${id} desactivado (baja lógica).`);
 
-        await Producto.destroy({ where: { id: id } });
-        console.log(`Producto con ID ${id} eliminado.`);
-
-        if (imagenIdAnterior) {
-            await limpiarImagenSiNoSeUsa(imagenIdAnterior);
-        }
-
-        res.redirect('/admin?mensaje=eliminado');
+        res.redirect('/admin?mensaje=desactivado');
     } catch (error) {
-        console.error('Error al eliminar producto:', error);
-        res.redirect('/admin?error=No se pudo eliminar el producto por un error interno.');
+        console.error('Error al desactivar producto:', error);
+        res.redirect('/admin?error=No se pudo desactivar el producto por un error interno.');
+    }
+});
+
+/**
+ * POST /admin/productos/reactivar/:id
+ * Reactiva un producto de la base de datos por su ID (alta lógica).
+ * Requiere autenticación de administrador.
+ * 
+ * @param {number} req.params.id - ID del producto a reactivar.
+ */
+router.post('/productos/reactivar/:id', verificarAdmin, async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        await Producto.update({ activo: true }, { where: { id: id } });
+        console.log(`Producto con ID ${id} reactivado.`);
+
+        res.redirect('/admin?mensaje=reactivado');
+    } catch (error) {
+        console.error('Error al reactivar producto:', error);
+        res.redirect('/admin?error=No se pudo reactivar el producto por un error interno.');
     }
 });
 

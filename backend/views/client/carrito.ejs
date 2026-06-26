@@ -8,6 +8,14 @@
         <h2 class="fw-bold text-uppercase tracking-wider m-0 fs-3">Tu Carrito</h2>
     </div>
 
+    <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-danger alert-dismissible fade show fw-bold shadow-sm rounded-3 d-flex align-items-center" role="alert">
+            <span class="fs-4 me-2">⚠️</span> 
+            <div><%= error %></div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <% } %>
+
     <div id="lista-carrito" class="mb-5">
         </div>
 

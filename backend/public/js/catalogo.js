@@ -1,60 +1,48 @@
 /**
  * catalogo.js
- * Gestiona la carga dinámica del catálogo desde `/api/productos` y el
- * filtrado cliente-side por categoría. Mantiene `productosGlobal` y
- * renderiza tarjetas en `#contenedor-productos`.
+ * Gestiona la carga dinámica del catálogo desde `/api/productos` con paginación
+ * y filtrado por categoría enviados al servidor.
  */
 document.addEventListener('DOMContentLoaded', () => {
     const contenedor = document.getElementById('contenedor-productos');
-    let productosGlobal = [];
+    const contenedorPaginacion = document.getElementById('paginacion-contenedor');
+    
+    let currentPage = 1;
+    let currentCategory = '';
 
     async function cargarProductos() {
         let productos = [];
+        let pagination = null;
+        
         try {
-            const respuesta = await fetch('/api/productos');
+            // Construir URL con paginación y categoría
+            let url = `/api/productos?page=${currentPage}&limit=4`;
+            if (currentCategory) {
+                url += `&categoria=${encodeURIComponent(currentCategory)}`;
+            }
+
+            const respuesta = await fetch(url);
             const data = await respuesta.json();
             productos = data.data || [];
+            pagination = data.pagination;
             
-            // Si la lista está vacía, forzamos el catch para cargar el dummy
-            if (productos.length === 0) {
-                throw new Error("La lista de productos está vacía");
-            }
         } catch (error) {
-            console.warn("Error o lista vacía al cargar desde /api/productos, intentando con /dummy.json:", error.message || error);
-            try {
-                const respuestaDummy = await fetch('/dummy.json');
-                productos = await respuestaDummy.json();
-            } catch (dummyError) {
-                console.error("Error al cargar productos desde ambos orígenes:", dummyError);
-                contenedor.innerHTML = '<div class="col-12 text-center mt-5"><h4 class="text-danger">Error al cargar el catálogo de suplementos.</h4></div>';
-                return;
-            }
+            console.error("Error al cargar productos:", error);
+            contenedor.innerHTML = '<div class="col-12 text-center mt-5"><h4 class="text-danger">Error al cargar el catálogo de suplementos.</h4></div>';
+            return;
         }
 
-        productosGlobal = productos;
-        renderProductos(productosGlobal);
-
-        // Añadir listeners a botones de categoría (si existen)
-        const botonesCat = document.querySelectorAll('.btn-categoria');
-        botonesCat.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const categoria = btn.getAttribute('data-category');
-                if (!categoria) return;
-                const filtrados = productosGlobal.filter(p => String(p.categoria).toLowerCase() === String(categoria).toLowerCase());
-                renderProductos(filtrados);
-
-                // marcar como activo visualmente
-                botonesCat.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-            });
-        });
+        renderProductos(productos);
+        if (pagination) {
+            renderPaginacion(pagination);
+        }
     }
 
     function renderProductos(lista) {
         contenedor.innerHTML = '';
 
         if (!lista || lista.length === 0) {
-            contenedor.innerHTML = '<div class="col-12 text-center mt-5"><h4 class="text-muted">No hay productos en esta categoría.</h4></div>';
+            contenedor.innerHTML = '<div class="col-12 text-center mt-5"><h4 class="text-muted">No hay productos disponibles en esta vista.</h4></div>';
             return;
         }
 
@@ -88,8 +76,66 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function renderPaginacion(pag) {
+        contenedorPaginacion.innerHTML = '';
+        if (pag.totalPages <= 1) return; // No mostrar si solo hay 1 página
+
+        const prevDisabled = pag.hasPrevPage ? '' : 'disabled';
+        const nextDisabled = pag.hasNextPage ? '' : 'disabled';
+
+        contenedorPaginacion.innerHTML = `
+            <button class="btn btn-outline-primary fw-bold px-4 rounded-pill" id="btn-prev" ${prevDisabled}>
+                ⬅️ Anterior
+            </button>
+            <span class="fw-bold text-muted mx-3">Página ${pag.page} de ${pag.totalPages}</span>
+            <button class="btn btn-outline-primary fw-bold px-4 rounded-pill" id="btn-next" ${nextDisabled}>
+                Siguiente ➡️
+            </button>
+        `;
+
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+
+        if (btnPrev) btnPrev.addEventListener('click', () => {
+            if (pag.hasPrevPage) {
+                currentPage--;
+                cargarProductos();
+            }
+        });
+
+        if (btnNext) btnNext.addEventListener('click', () => {
+            if (pag.hasNextPage) {
+                currentPage++;
+                cargarProductos();
+            }
+        });
+    }
+
+    // Configurar listeners para filtros de categoría
+    const botonesCat = document.querySelectorAll('.btn-categoria');
+    botonesCat.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const categoria = btn.getAttribute('data-category');
+            
+            // Si ya está activa, la desmarcamos (mostrar todos)
+            if (btn.classList.contains('active')) {
+                btn.classList.remove('active');
+                currentCategory = '';
+            } else {
+                botonesCat.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentCategory = categoria;
+            }
+            
+            currentPage = 1; // Volver a la página 1 al filtrar
+            cargarProductos();
+        });
+    });
+
+    // Carga inicial
     cargarProductos();
 
+    // Lógica del carrito (delegación de eventos)
     contenedor.addEventListener('click', (evento) => {
         const btnClickeado = evento.target.closest('.btn-agregar');
         
@@ -106,7 +152,6 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 carrito.push({ id, nombre, precio, cantidad: 1 });
             }
-
 
             localStorage.setItem('carrito_gym', JSON.stringify(carrito));
             alert(`¡Sumaste 1x ${nombre} al carrito!`);

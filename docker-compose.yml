@@ -34,9 +34,7 @@ services:
     volumes:
       - ./backend:/usr/src/app:Z
       - ./storage:/usr/src/storage:Z
-      - backend_node_modules:/usr/src/app/node_modules
-    command: npm run dev
+    command: sh -c "npm install && npm run dev"
 
 volumes:
   db_data:
-  backend_node_modules:
