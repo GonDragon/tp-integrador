@@ -197,7 +197,7 @@ router.get('/productos/nuevo', verificarAdmin, (req, res) => {
  * @param {File} req.file - Archivo de imagen del producto.
  */
 router.post('/productos/nuevo', verificarAdmin, upload.single('imagen'), async (req, res) => {
-    const { nombre, detalles, precio, categoria, activo } = req.body;
+    const { nombre, detalles, precio, categoria, activo, stock } = req.body;
     
     console.log("Recibiendo datos del form:", req.body); 
 
@@ -214,7 +214,8 @@ router.post('/productos/nuevo', verificarAdmin, upload.single('imagen'), async (
             precio: parseFloat(precio),
             imagenId: imagenId,
             categoria: categoria,
-            activo: activo === 'on' // No seria mejor usar un bool directamente?
+            activo: activo === 'on',
+            stock: parseInt(stock) || 0
         });
 
         console.log("Producto guardado en MySQL con ID:", nuevoProd.id);
@@ -292,7 +293,7 @@ router.get('/productos/editar/:id', verificarAdmin, async (req, res) => {
  */
 router.post('/productos/editar/:id', verificarAdmin, upload.single('imagen'), async (req, res) => {
     const id = req.params.id;
-    const { nombre, detalles, precio, categoria, activo } = req.body;
+    const { nombre, detalles, precio, categoria, activo, stock } = req.body;
     
     try {
         const productoAnterior = await Producto.findByPk(id);
@@ -311,7 +312,8 @@ router.post('/productos/editar/:id', verificarAdmin, upload.single('imagen'), as
             detalles: detalles,
             precio: parseFloat(precio),
             categoria: categoria,
-            activo: activo === 'on' // No seria mejor usar un bool directamente?
+            activo: activo === 'on',
+            stock: parseInt(stock) || 0
         };
 
         let nuevaImagenId = imagenIdAnterior;

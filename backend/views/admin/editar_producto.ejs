@@ -25,13 +25,17 @@
                 <form action="/admin/productos/editar/<%= producto.id %>" method="POST" enctype="multipart/form-data">
                     
                     <div class="row g-3 mb-3">
-                        <div class="col-12 col-md-8">
+                        <div class="col-12 col-md-5">
                             <label for="nombre" class="form-label fw-bold small text-muted text-uppercase">Nombre del Producto</label>
                             <input type="text" class="form-control form-control-lg border-0 shadow-sm" id="nombre" name="nombre" value="<%= producto.nombre %>" required autofocus>
                         </div>
                         <div class="col-12 col-md-4">
                             <label for="precio" class="form-label fw-bold small text-muted text-uppercase">Precio ($)</label>
                             <input type="number" step="0.01" class="form-control form-control-lg border-0 shadow-sm text-success fw-bold" id="precio" name="precio" value="<%= producto.precio %>" required>
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <label for="stock" class="form-label fw-bold small text-muted text-uppercase">Stock</label>
+                            <input type="number" class="form-control form-control-lg border-0 shadow-sm fw-bold" id="stock" name="stock" value="<%= producto.stock %>" required>
                         </div>
                     </div>
 

@@ -45,6 +45,7 @@
                         <th scope="col" class="ps-4">ID</th>
                         <th scope="col">Foto</th>
                         <th scope="col">Nombre</th>
+                        <th scope="col">Stock</th>
                         <th scope="col">Precio</th>
                         <th scope="col">Estado</th>
                         <th scope="col" class="text-end pe-4">Acciones</th>
@@ -65,6 +66,15 @@
                                     </div>
                                 </td>
                                 <td class="fw-bold"><%= producto.nombre %></td>
+                                <td class="fw-bold">
+                                    <% if (producto.stock <= 0) { %>
+                                        <span class="text-danger">0 (Sin stock)</span>
+                                    <% } else if (producto.stock <= 5) { %>
+                                        <span class="text-warning"><%= producto.stock %> (Bajo)</span>
+                                    <% } else { %>
+                                        <span class="text-primary"><%= producto.stock %></span>
+                                    <% } %>
+                                </td>
                                 <td class="text-success fw-bold">$<%= producto.precio %></td>
                                 <td>
                                     <% if (producto.activo) { %>
@@ -89,7 +99,7 @@
                         <% }) %>
                     <% } else { %>
                         <tr>
-                            <td colspan="6" class="text-center py-5 text-muted">
+                            <td colspan="7" class="text-center py-5 text-muted">
                                 <span class="fs-1 d-block mb-3">📦</span>
                                 <h5 class="fw-bold">No hay suplementos cargados en el sistema</h5>
                                 <p class="small">Hacé clic en el botón verde de "Nuevo Producto" para empezar a llenar tu catálogo.</p>
